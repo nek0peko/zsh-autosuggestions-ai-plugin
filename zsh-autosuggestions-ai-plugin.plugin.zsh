@@ -22,6 +22,10 @@
 #   * killing the fork's process group also cancels the in-flight model
 #     request, so a pending suggestion stops the moment you press a key.
 #
+# Implementation is intentionally dependency-light: only `curl` is used
+# to talk to Ollama (no python/jq), and JSON is built/parsed with pure
+# zsh parameter expansion.
+#
 # Model is hardwired to qwen3.5:4b for now; the variables below are
 # exposed with defaults so making it configurable later is trivial.
 
@@ -34,6 +38,17 @@
 # Ollama HTTP endpoint.
 : ${ZSH_AUTOSUGGEST_AI_ENDPOINT:=http://localhost:11434/api/generate}
 
+# Escape a string for embedding inside a JSON string literal.
+_zsh_autosuggest_ai_json_escape() {
+	local s=$1
+	s=${s//\\/\\\\}      # backslash first
+	s=${s//\"/\\\"}      # double quote
+	s=${s//$'\n'/\\n}    # newline
+	s=${s//$'\r'/\\r}    # carriage return
+	s=${s//$'\t'/\\t}    # tab
+	print -rn -- "$s"
+}
+
 _zsh_autosuggest_strategy_ai() {
 	emulate -L zsh
 
@@ -44,10 +59,9 @@ _zsh_autosuggest_strategy_ai() {
 	# Nothing to complete on an empty buffer.
 	[[ -n "$buffer" ]] || return
 
-	# Runtime dependency check: silently skip if the toolchain isn't
-	# installed, so suggestions degrade gracefully to history-only.
-	(( $+commands[ollama] )) || return
-	(( $+commands[python3] )) || return
+	# Runtime dependency check: silently skip if curl isn't installed, so
+	# suggestions degrade gracefully to history-only.
+	(( $+commands[curl] )) || return
 
 	# Debounce: if another key arrives within this window, the async
 	# machinery kills this whole fork (including the sleep and the model
@@ -58,62 +72,45 @@ _zsh_autosuggest_strategy_ai() {
 	local history_ctx
 	history_ctx="$(fc -ln -$ZSH_AUTOSUGGEST_AI_HISTORY_SIZE -1 2>/dev/null)"
 
-	# All request building / HTTP / parsing happens in one python call so
-	# we never hand-roll JSON escaping in the shell. It prints the suffix
-	# to append (no trailing newline) or nothing on any failure.
-	local suffix
-	suffix="$(
-		ZSH_AUTOSUGGEST_AI_MODEL="$ZSH_AUTOSUGGEST_AI_MODEL" \
-		ZSH_AUTOSUGGEST_AI_ENDPOINT="$ZSH_AUTOSUGGEST_AI_ENDPOINT" \
-		python3 -c '
-import json, os, sys, urllib.request
+	# Build the prompt (plain text), then JSON-escape the whole thing.
+	local prompt
+	prompt="You are a shell command completion engine. Given a partial command, output ONLY the characters needed to complete the current (final) word. Never repeat the input. Output at most one word or flag, no spaces, no explanation, no quotes, no punctuation, no newlines. If nothing fits, output nothing."$'\n\n'
+	if [[ -n "${history_ctx//[[:space:]]/}" ]]; then
+		prompt+="Recent commands the user ran, newest last (context only):"$'\n'"$history_ctx"$'\n\n'
+	fi
+	prompt+="Partial: git pus"$'\n'"Missing suffix: h"$'\n'
+	prompt+="Partial: git pu"$'\n'"Missing suffix: ll"$'\n'
+	prompt+="Partial: ca"$'\n'"Missing suffix: t"$'\n'
+	prompt+="Partial: docke"$'\n'"Missing suffix: r"$'\n'
+	prompt+="Partial: git che"$'\n'"Missing suffix: ckout"$'\n'
+	prompt+="Partial: $buffer"$'\n'"Missing suffix:"
 
-buffer = sys.argv[1]
-history = sys.argv[2]
-model = os.environ["ZSH_AUTOSUGGEST_AI_MODEL"]
-endpoint = os.environ["ZSH_AUTOSUGGEST_AI_ENDPOINT"]
+	local prompt_json model_json
+	prompt_json="$(_zsh_autosuggest_ai_json_escape "$prompt")"
+	model_json="$(_zsh_autosuggest_ai_json_escape "$ZSH_AUTOSUGGEST_AI_MODEL")"
 
-prompt = (
-    "You are a shell command completion engine. Given a partial command, "
-    "output ONLY the characters needed to complete the current (final) word. "
-    "Never repeat the input. Output at most one word or flag, no spaces, no "
-    "explanation, no quotes, no punctuation, no newlines. If nothing fits, "
-    "output nothing.\n\n"
-)
-if history.strip():
-    prompt += "Recent commands the user ran, newest last (context only):\n"
-    prompt += history.strip() + "\n\n"
-prompt += (
-    "Partial: git pus\nMissing suffix: h\n"
-    "Partial: git pu\nMissing suffix: ll\n"
-    "Partial: ca\nMissing suffix: t\n"
-    "Partial: docke\nMissing suffix: r\n"
-    "Partial: git che\nMissing suffix: ckout\n"
-    "Partial: " + buffer + "\nMissing suffix:"
-)
+	# One curl call to Ollama. Non-streaming response is a single JSON
+	# object whose "response" field holds the model output.
+	local resp
+	resp="$(curl -s --max-time 10 "$ZSH_AUTOSUGGEST_AI_ENDPOINT" \
+		-H 'Content-Type: application/json' \
+		-d "{\"model\":\"$model_json\",\"prompt\":\"$prompt_json\",\"think\":false,\"stream\":false,\"options\":{\"temperature\":0,\"num_predict\":20}}" \
+		2>/dev/null)" || return
 
-body = json.dumps({
-    "model": model,
-    "prompt": prompt,
-    "think": False,
-    "stream": False,
-    "options": {"temperature": 0, "num_predict": 20},
-}).encode()
+	# Extract the "response" field value from the JSON (it is the last
+	# such key; the model output never contains an unescaped quote for our
+	# single-token prompt, so a simple slice is safe).
+	[[ "$resp" == *'"response":"'* ]] || return
+	local suffix="${resp#*\"response\":\"}"
+	suffix="${suffix%%\"*}"
 
-try:
-    req = urllib.request.Request(
-        endpoint, data=body, headers={"Content-Type": "application/json"})
-    data = json.loads(urllib.request.urlopen(req, timeout=10).read())
-except Exception:
-    sys.exit(0)
-
-resp = data.get("response", "")
-# Keep only the first line, trim, and enforce the single-token limit.
-suffix = resp.splitlines()[0].strip() if resp else ""
-suffix = suffix.split()[0] if suffix.split() else ""
-sys.stdout.write(suffix)
-' "$buffer" "$history_ctx" 2>/dev/null
-	)"
+	# Unescape the few sequences our escape step could have produced, then
+	# keep only the first line and first whitespace-delimited token.
+	suffix="${suffix//\\n/ }"
+	suffix="${suffix//\\t/ }"
+	suffix="${suffix//\\\"/\"}"
+	suffix="${suffix//\\\\/\\}"
+	suffix="${suffix%%[[:space:]]*}"
 
 	# zsh-autosuggestions expects the full command line (prefix + suffix),
 	# and only keeps it if it starts with buffer.

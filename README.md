@@ -1,56 +1,51 @@
 # zsh-autosuggestions-ai-plugin
 
-A drop-in **AI suggestion strategy** for
-[zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions),
-backed by a **local LLM** served by [Ollama](https://ollama.com).
+A local-LLM fallback strategy for
+[zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions).
+When `history` has no match, it asks a local model (via
+[Ollama](https://ollama.com)) to complete the command you're typing. It plugs
+in through the official `ZSH_AUTOSUGGEST_STRATEGY` mechanism, so
+zsh-autosuggestions stays completely unmodified.
 
-It plugs into the official plugin through its public
-`ZSH_AUTOSUGGEST_STRATEGY` mechanism — it does **not** modify or vendor
-zsh-autosuggestions. You keep upstream exactly as-is and just add this
-small plugin on top.
+Only `curl` is required at runtime. If Ollama or `curl` is missing, the
+strategy silently does nothing and suggestions fall back to history only.
 
-## How it works
+## Install
 
-zsh-autosuggestions tries each entry in `ZSH_AUTOSUGGEST_STRATEGY` in order
-and uses the first non-empty result. This plugin registers an `ai` strategy
-that is consulted **only when earlier strategies (e.g. `history`) find no
-match**. So:
+1. Install [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
+   and [Ollama](https://ollama.com/download), then pull the model:
 
-- Your normal typing stays instant (served by `history`).
-- The local model is called only as a fallback for commands you've never run.
-- **Debounce + interruption are free**: zsh-autosuggestions forks a fresh
-  subprocess per keystroke and kills the previous one, so typing another key
-  both debounces (we `sleep` before calling the model) and cancels any
-  in-flight request.
+   ```sh
+   ollama pull qwen3.5:4b
+   ```
 
-## Requirements
+2. Clone this repo and source it **after** zsh-autosuggestions in `.zshrc`:
 
-- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
-- [Ollama](https://ollama.com) + the model (see [INSTALL.md](INSTALL.md))
-- `python3` (used to talk to the Ollama HTTP API)
+   ```sh
+   git clone https://github.com/nek0peko/zsh-autosuggestions-ai-plugin ~/.zsh/zsh-autosuggestions-ai-plugin
 
-If Ollama or python3 isn't installed, the strategy silently does nothing and
-suggestions fall back to history only.
+   # in ~/.zshrc:
+   source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+   source ~/.zsh/zsh-autosuggestions-ai-plugin/zsh-autosuggestions-ai-plugin.plugin.zsh
+   ```
 
-## Installation
+   Oh My Zsh users: clone into `${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/`
+   and list `zsh-autosuggestions-ai-plugin` **after** `zsh-autosuggestions`
+   in your `plugins=(...)`.
 
-See [INSTALL.md](INSTALL.md). Short version:
+3. Start a new terminal.
 
-```sh
-# 1. official plugin (unchanged)
-source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-# 2. this plugin (auto-appends `ai` as a fallback strategy)
-source ~/.zsh/zsh-autosuggestions-ai-plugin/zsh-autosuggestions-ai-plugin.plugin.zsh
-```
+> **Order matters:** source the official plugin first. This plugin
+> auto-appends `ai` to `ZSH_AUTOSUGGEST_STRATEGY` only if zsh-autosuggestions
+> is already loaded.
 
-> **Order matters:** source the official plugin *first*, then this one. The
-> `ai` strategy relies on zsh-autosuggestions' async machinery, and this
-> plugin auto-registers `ai` only if zsh-autosuggestions is already loaded.
+## Usage
 
-## Configuration
+Just type. `history` serves commands you've run before (instant); for anything
+new, the `ai` strategy kicks in after a short debounce and the local model
+suggests a completion. Accept it with <kbd>→</kbd> like any suggestion.
 
-The model is hardwired to `qwen3.5:4b` for now. These variables are exposed
-with defaults if you want to tweak behavior; set them before sourcing:
+Override behavior by setting these before sourcing the plugin:
 
 | Variable | Default | Meaning |
 | --- | --- | --- |
@@ -59,8 +54,7 @@ with defaults if you want to tweak behavior; set them before sourcing:
 | `ZSH_AUTOSUGGEST_AI_HISTORY_SIZE` | `20` | Recent commands fed as context |
 | `ZSH_AUTOSUGGEST_AI_ENDPOINT` | `http://localhost:11434/api/generate` | Ollama endpoint |
 
-To control strategy order yourself, set it explicitly before sourcing this
-plugin (it won't duplicate `ai` if you've already added it):
+To control strategy order yourself (it won't duplicate `ai`):
 
 ```sh
 ZSH_AUTOSUGGEST_STRATEGY=(history completion ai)

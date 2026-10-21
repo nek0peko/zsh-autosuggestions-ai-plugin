@@ -72,6 +72,41 @@ To control strategy order yourself (it won't duplicate `ai`):
 ZSH_AUTOSUGGEST_STRATEGY=(history completion ai)
 ```
 
+## Update
+
+```sh
+cd ~/.zsh/zsh-autosuggestions-ai-plugin && git pull
+exec zsh
+```
+
+Oh My Zsh users:
+
+```sh
+cd "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions-ai-plugin" && git pull
+exec zsh
+```
+
+## Uninstall
+
+1. Remove the `source ...zsh-autosuggestions-ai-plugin.plugin.zsh` line from
+   `~/.zshrc` (or drop `zsh-autosuggestions-ai-plugin` from your Oh My Zsh
+   `plugins=(...)` list).
+2. Delete the clone:
+
+   ```sh
+   rm -rf ~/.zsh/zsh-autosuggestions-ai-plugin
+   # Oh My Zsh:
+   rm -rf "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions-ai-plugin"
+   ```
+
+3. Optionally remove the model and uninstall Ollama if you no longer need them:
+
+   ```sh
+   ollama rm qwen3.5:4b
+   ```
+
+4. `exec zsh` to start a clean shell.
+
 ## License
 
 [MIT](LICENSE) © nek0peko

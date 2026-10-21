@@ -19,21 +19,33 @@ strategy silently does nothing and suggestions fall back to history only.
    ollama pull qwen3.5:4b
    ```
 
-2. Clone this repo and source it **after** zsh-autosuggestions in `.zshrc`:
+2. Clone this repo:
 
    ```sh
    git clone https://github.com/nek0peko/zsh-autosuggestions-ai-plugin ~/.zsh/zsh-autosuggestions-ai-plugin
+   ```
 
-   # in ~/.zshrc:
-   source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+3. Load it **after** zsh-autosuggestions in `~/.zshrc`.
+
+   If you installed zsh-autosuggestions via Homebrew, add:
+
+   ```sh
+   source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
    source ~/.zsh/zsh-autosuggestions-ai-plugin/zsh-autosuggestions-ai-plugin.plugin.zsh
    ```
 
-   Oh My Zsh users: clone into `${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/`
-   and list `zsh-autosuggestions-ai-plugin` **after** `zsh-autosuggestions`
-   in your `plugins=(...)`.
+   Oh My Zsh users instead clone into the custom plugins dir and add both to
+   your `plugins=(...)` list, with this plugin **after** `zsh-autosuggestions`:
 
-3. Start a new terminal.
+   ```sh
+   git clone https://github.com/nek0peko/zsh-autosuggestions-ai-plugin "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions-ai-plugin"
+   ```
+
+   ```sh
+   plugins=(... zsh-autosuggestions zsh-autosuggestions-ai-plugin)
+   ```
+
+4. Start a new terminal (or run `exec zsh`).
 
 > **Order matters:** source the official plugin first. This plugin
 > auto-appends `ai` to `ZSH_AUTOSUGGEST_STRATEGY` only if zsh-autosuggestions

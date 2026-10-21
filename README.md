@@ -63,8 +63,8 @@ Override behavior by setting these before sourcing the plugin:
 | --- | --- | --- |
 | `ZSH_AUTOSUGGEST_AI_MODEL` | `qwen3.5:4b` | Ollama model tag |
 | `ZSH_AUTOSUGGEST_AI_DEBOUNCE` | `0.2` | Debounce seconds before calling the model |
-| `ZSH_AUTOSUGGEST_AI_HISTORY_SIZE` | `20` | Recent commands fed as context |
 | `ZSH_AUTOSUGGEST_AI_ENDPOINT` | `http://localhost:11434/api/generate` | Ollama endpoint |
+| `ZSH_AUTOSUGGEST_AI_PROMPT_FILE` | `<plugin dir>/prompt.txt` | Prompt template; `{INPUT}` is replaced with the buffer |
 
 To control strategy order yourself (it won't duplicate `ai`):
 

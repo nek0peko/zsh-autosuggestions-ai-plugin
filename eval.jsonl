@@ -1,0 +1,172 @@
+{"input": "git checkout -b feat_hello_wo", "expected": ["rld"], "category": "branch", "note": "new branch"}
+{"input": "git checkout -b fix_login_bu", "expected": ["g"], "category": "branch", "note": "new branch"}
+{"input": "git checkout -b feat_user_pro", "expected": ["file"], "category": "branch", "note": "new branch"}
+{"input": "git checkout -b chore_update_de", "expected": ["ps", "p"], "category": "branch", "note": "new branch"}
+{"input": "git checkout -b feat/user-", "expected": ["profile", "auth", "login", "info", "list"], "category": "branch", "note": "slash-prefix branch"}
+{"input": "git checkout -b feat/add_pay", "expected": ["ment"], "category": "branch", "note": "payment"}
+{"input": "git checkout -b fix/null_poin", "expected": ["ter"], "category": "branch", "note": "pointer"}
+{"input": "git checkout -b feat/user_logi", "expected": ["n"], "category": "branch", "note": "login"}
+{"input": "git checkout -b feat/add_regis", "expected": ["ter", "tration"], "category": "branch", "note": "register"}
+{"input": "git checkout -b hotfix_critical_bu", "expected": ["g"], "category": "branch", "note": "critical bug"}
+{"input": "git checkout -b refactor_data_mod", "expected": ["el"], "category": "branch", "note": "data model"}
+{"input": "git checkout -b feat_dark_mod", "expected": ["e"], "category": "branch", "note": "dark mode"}
+{"input": "git checkout -b feat_search_opt", "expected": ["imization"], "category": "branch", "note": "search optimization"}
+{"input": "git checkout -b feat_add_cach", "expected": ["e"], "category": "branch", "note": "cache"}
+{"input": "git checkout -b feat_api_endp", "expected": ["oint"], "category": "branch", "note": "endpoint"}
+{"input": "git branch -D feat/user-", "expected": ["profile", "auth", "login", "info", "list"], "category": "branch", "note": "delete branch"}
+{"input": "git branch -D fix/old_bu", "expected": ["g"], "category": "branch", "note": "delete bug branch"}
+{"input": "git merge feat_pay", "expected": ["ment"], "category": "branch", "note": "merge branch"}
+{"input": "git rebase feat_auth_impr", "expected": ["ovement"], "category": "branch", "note": "rebase branch"}
+{"input": "git push origin feat_new_pa", "expected": ["ge"], "category": "branch", "note": "push branch"}
+{"input": "git commit -m \"fix: upda", "expected": ["te"], "category": "commitmsg", "note": "update"}
+{"input": "git commit -m \"feat: ad", "expected": ["d"], "category": "commitmsg", "note": "add"}
+{"input": "git commit -m \"docs: upd", "expected": ["ate"], "category": "commitmsg", "note": "update"}
+{"input": "git commit -m \"docs: upda", "expected": ["te"], "category": "commitmsg", "note": "update"}
+{"input": "git commit -m \"chore: rem", "expected": ["ove"], "category": "commitmsg", "note": "remove"}
+{"input": "git commit -m \"refactor: cle", "expected": ["an", "anup"], "category": "commitmsg", "note": "cleanup"}
+{"input": "git commit -m \"test: ad", "expected": ["d"], "category": "commitmsg", "note": "add"}
+{"input": "git commit -m \"perf: optimi", "expected": ["ze"], "category": "commitmsg", "note": "optimize"}
+{"input": "git commit -m \"fix: resol", "expected": ["ve"], "category": "commitmsg", "note": "resolve"}
+{"input": "git commit -m \"feat: impl", "expected": ["ement", "ementation"], "category": "commitmsg", "note": "implement"}
+{"input": "git commit -m \"fix: cor", "expected": ["rect"], "category": "commitmsg", "note": "correct"}
+{"input": "git commit -m \"feat: supp", "expected": ["ort"], "category": "commitmsg", "note": "support"}
+{"input": "git commit -m \"fix: resto", "expected": ["re"], "category": "commitmsg", "note": "restore"}
+{"input": "git commit -m \"feat: migra", "expected": ["te"], "category": "commitmsg", "note": "migrate"}
+{"input": "git commit -m \"chore: dele", "expected": ["te"], "category": "commitmsg", "note": "delete"}
+{"input": "git commit -m \"feat: enab", "expected": ["le"], "category": "commitmsg", "note": "enable"}
+{"input": "git commit -m \"feat: disab", "expected": ["le"], "category": "commitmsg", "note": "disable"}
+{"input": "git commit -m \"fix: hand", "expected": ["le"], "category": "commitmsg", "note": "handle"}
+{"input": "git commit -m \"refactor: extr", "expected": ["act"], "category": "commitmsg", "note": "extract"}
+{"input": "git commit -m \"feat: valid", "expected": ["ate"], "category": "commitmsg", "note": "validate"}
+{"input": "git commit -m \"fix: initi", "expected": ["alize"], "category": "commitmsg", "note": "initialize"}
+{"input": "git commit -m \"feat: integr", "expected": ["ate"], "category": "commitmsg", "note": "integrate"}
+{"input": "git commit -m \"docs: translat", "expected": ["e"], "category": "commitmsg", "note": "translate"}
+{"input": "git commit -m \"feat: expo", "expected": ["rt"], "category": "commitmsg", "note": "export"}
+{"input": "git commit -m \"feat: imp", "expected": ["ort", "lement"], "category": "commitmsg", "note": "import or implement"}
+{"input": "git commit -m \"fix: proc", "expected": ["ess"], "category": "commitmsg", "note": "process"}
+{"input": "git commit -m \"feat: para", "expected": ["llel"], "category": "commitmsg", "note": "parallel"}
+{"input": "git commit -m \"feat: asyn", "expected": ["c"], "category": "commitmsg", "note": "async"}
+{"input": "docker build -t myapp:la", "expected": ["test"], "category": "tag", "note": "latest"}
+{"input": "docker build -t myapp:v1.0.", "expected": ["0"], "category": "tag", "note": "version"}
+{"input": "docker tag myimg:la", "expected": ["test"], "category": "tag", "note": "latest"}
+{"input": "docker build -t registry.io/team/app:sta", "expected": ["ble", "ging"], "category": "tag", "note": "stable/staging"}
+{"input": "docker build -t myservice:prod", "expected": ["uction"], "category": "tag", "note": "production"}
+{"input": "docker tag app:dev", "expected": ["elopment"], "category": "tag", "note": "development"}
+{"input": "docker build -t svc:v2.1.", "expected": ["0"], "category": "tag", "note": "semver"}
+{"input": "docker pull nginx:la", "expected": ["test"], "category": "tag", "note": "pull latest"}
+{"input": "docker pull python:3.11-sli", "expected": ["m"], "category": "tag", "note": "slim variant"}
+{"input": "docker pull alpine:la", "expected": ["test"], "category": "tag", "note": "alpine latest"}
+{"input": "docker build -t svc:relea", "expected": ["se"], "category": "tag", "note": "release"}
+{"input": "docker build -t svc:beta.", "expected": ["1", "0"], "category": "tag", "note": "beta.1"}
+{"input": "export NODE_", "expected": ["ENV", "MODULES", "PATH", "OPTIONS"], "category": "envvar", "note": "node env"}
+{"input": "export JAVA_", "expected": ["HOME", "OPTS"], "category": "envvar", "note": "java env"}
+{"input": "export GOPR", "expected": ["OXY", "IVATE"], "category": "envvar", "note": "GOPROXY"}
+{"input": "export PYTHON", "expected": ["PATH", "HOME"], "category": "envvar", "note": "pythonpath"}
+{"input": "export GOP", "expected": ["ATH", "ROXY", "RIVATE"], "category": "envvar", "note": "GOPATH"}
+{"input": "export CARGO_", "expected": ["HOME", "TARGET_DIR"], "category": "envvar", "note": "cargo home"}
+{"input": "export RUST_", "expected": ["BACKTRACE", "LOG"], "category": "envvar", "note": "rust log"}
+{"input": "export AWS_", "expected": ["REGION", "PROFILE", "ACCESS_KEY_ID"], "category": "envvar", "note": "aws env"}
+{"input": "export DOCKER_", "expected": ["HOST", "BUILDKIT"], "category": "envvar", "note": "docker env"}
+{"input": "export KUBE", "expected": ["CONFIG"], "category": "envvar", "note": "kubeconfig"}
+{"input": "export HTTP_PRO", "expected": ["XY"], "category": "envvar", "note": "http proxy"}
+{"input": "export HTTPS_PRO", "expected": ["XY"], "category": "envvar", "note": "https proxy"}
+{"input": "export NO_PRO", "expected": ["XY"], "category": "envvar", "note": "no proxy"}
+{"input": "export LD_LIB", "expected": ["RARY_PATH"], "category": "envvar", "note": "ld lib path"}
+{"input": "export CLASSP", "expected": ["ATH"], "category": "envvar", "note": "classpath"}
+{"input": "export GRADLE_", "expected": ["HOME", "OPTS"], "category": "envvar", "note": "gradle"}
+{"input": "export MAVEN_", "expected": ["HOME", "OPTS"], "category": "envvar", "note": "maven"}
+{"input": "echo hel", "expected": ["lo"], "category": "freeform", "note": "hello"}
+{"input": "echo good mor", "expected": ["ning"], "category": "freeform", "note": "morning"}
+{"input": "echo thank yo", "expected": ["u"], "category": "freeform", "note": "thank you"}
+{"input": "echo welco", "expected": ["me"], "category": "freeform", "note": "welcome"}
+{"input": "echo good eveni", "expected": ["ng"], "category": "freeform", "note": "evening"}
+{"input": "echo good aftern", "expected": ["oon"], "category": "freeform", "note": "afternoon"}
+{"input": "echo good ni", "expected": ["ght"], "category": "freeform", "note": "night"}
+{"input": "echo see yo", "expected": ["u"], "category": "freeform", "note": "see you"}
+{"input": "echo have a nic", "expected": ["e"], "category": "freeform", "note": "have a nice"}
+{"input": "echo happy birth", "expected": ["day"], "category": "freeform", "note": "birthday"}
+{"input": "echo congratu", "expected": ["lations"], "category": "freeform", "note": "congratulations"}
+{"input": "echo univer", "expected": ["se", "sity", "sal"], "category": "freeform", "note": "universe"}
+{"input": "echo develo", "expected": ["p", "per", "pment"], "category": "freeform", "note": "develop"}
+{"input": "echo imagi", "expected": ["ne", "nation"], "category": "freeform", "note": "imagine"}
+{"input": "echo beauti", "expected": ["ful"], "category": "freeform", "note": "beautiful"}
+{"input": "echo won", "expected": ["der", "derful"], "category": "freeform", "note": "wonder"}
+{"input": "echo infor", "expected": ["mation"], "category": "freeform", "note": "information"}
+{"input": "echo educa", "expected": ["tion"], "category": "freeform", "note": "education"}
+{"input": "echo gover", "expected": ["nment"], "category": "freeform", "note": "government"}
+{"input": "echo techno", "expected": ["logy"], "category": "freeform", "note": "technology"}
+{"input": "echo organiz", "expected": ["ation"], "category": "freeform", "note": "organization"}
+{"input": "echo environ", "expected": ["ment"], "category": "freeform", "note": "environment"}
+{"input": "echo neighbo", "expected": ["r", "rhood", "ur"], "category": "freeform", "note": "neighbor"}
+{"input": "echo tomo", "expected": ["rrow"], "category": "freeform", "note": "tomorrow"}
+{"input": "echo yester", "expected": ["day"], "category": "freeform", "note": "yesterday"}
+{"input": "你", "expected": ["好"], "category": "zh", "note": "你好"}
+{"input": "早上", "expected": ["好"], "category": "zh", "note": "早上好"}
+{"input": "晚上", "expected": ["好"], "category": "zh", "note": "晚上好"}
+{"input": "再", "expected": ["见", "次", "来"], "category": "zh", "note": "再见"}
+{"input": "谢", "expected": ["谢", "的"], "category": "zh", "note": "谢谢"}
+{"input": "对不", "expected": ["起"], "category": "zh", "note": "对不起"}
+{"input": "没关", "expected": ["系"], "category": "zh", "note": "没关系"}
+{"input": "北", "expected": ["京", "方", "部"], "category": "zh", "note": "北京"}
+{"input": "上", "expected": ["海", "面", "午", "班"], "category": "zh", "note": "上海"}
+{"input": "中", "expected": ["国", "心", "午", "文"], "category": "zh", "note": "中国"}
+{"input": "程", "expected": ["序", "度"], "category": "zh", "note": "程序"}
+{"input": "代", "expected": ["码", "表"], "category": "zh", "note": "代码"}
+{"input": "搜", "expected": ["索"], "category": "zh", "note": "搜索"}
+{"input": "数据", "expected": ["库", "分析"], "category": "zh", "note": "数据库"}
+{"input": "人工智", "expected": ["能"], "category": "zh", "note": "人工智能"}
+{"input": "机器学", "expected": ["习"], "category": "zh", "note": "机器学习"}
+{"input": "深度学", "expected": ["习"], "category": "zh", "note": "深度学习"}
+{"input": "开", "expected": ["始", "心", "放", "发"], "category": "zh", "note": "开始"}
+{"input": "结", "expected": ["束", "果", "构"], "category": "zh", "note": "结束"}
+{"input": "问", "expected": ["题", "答"], "category": "zh", "note": "问题"}
+{"input": "回", "expected": ["答", "家", "来", "去"], "category": "zh", "note": "回答"}
+{"input": "新年快", "expected": ["乐"], "category": "zh", "note": "新年快乐"}
+{"input": "生日快", "expected": ["乐"], "category": "zh", "note": "生日快乐"}
+{"input": "妈", "expected": ["妈"], "category": "zh", "note": "妈妈"}
+{"input": "爸", "expected": ["爸"], "category": "zh", "note": "爸爸"}
+{"input": "哥", "expected": ["哥"], "category": "zh", "note": "哥哥"}
+{"input": "弟", "expected": ["弟"], "category": "zh", "note": "弟弟"}
+{"input": "姐", "expected": ["姐"], "category": "zh", "note": "姐姐"}
+{"input": "妹", "expected": ["妹"], "category": "zh", "note": "妹妹"}
+{"input": "电", "expected": ["脑", "话", "影", "视"], "category": "zh", "note": "电脑"}
+{"input": "手", "expected": ["机", "册", "术"], "category": "zh", "note": "手机"}
+{"input": "苹", "expected": ["果"], "category": "zh", "note": "苹果"}
+{"input": "香", "expected": ["蕉", "港"], "category": "zh", "note": "香蕉"}
+{"input": "橙", "expected": ["子"], "category": "zh", "note": "橙子"}
+{"input": "明", "expected": ["天", "白"], "category": "zh", "note": "明天"}
+{"input": "今", "expected": ["天", "年"], "category": "zh", "note": "今天"}
+{"input": "昨", "expected": ["天"], "category": "zh", "note": "昨天"}
+{"input": "星", "expected": ["期", "星"], "category": "zh", "note": "星期"}
+{"input": "月", "expected": ["亮", "份"], "category": "zh", "note": "月亮"}
+{"input": "太", "expected": ["阳"], "category": "zh", "note": "太阳"}
+{"input": "彩", "expected": ["虹", "色"], "category": "zh", "note": "彩虹"}
+{"input": "下", "expected": ["午", "面", "次"], "category": "zh", "note": "下午"}
+{"input": "左", "expected": ["边", "右", "手"], "category": "zh", "note": "左边"}
+{"input": "右", "expected": ["边"], "category": "zh", "note": "右边"}
+{"input": "前", "expected": ["面", "后", "进"], "category": "zh", "note": "前面"}
+{"input": "后", "expected": ["面", "来"], "category": "zh", "note": "后面"}
+{"input": "朋", "expected": ["友"], "category": "zh", "note": "朋友"}
+{"input": "家", "expected": ["人", "庭", "乡"], "category": "zh", "note": "家人"}
+{"input": "工", "expected": ["作", "程", "厂"], "category": "zh", "note": "工作"}
+{"input": "学", "expected": ["习", "校", "生"], "category": "zh", "note": "学习"}
+{"input": "老", "expected": ["师", "板", "人"], "category": "zh", "note": "老师"}
+{"input": "医", "expected": ["生", "院"], "category": "zh", "note": "医生"}
+{"input": "司", "expected": ["机"], "category": "zh", "note": "司机"}
+{"input": "操作系", "expected": ["统"], "category": "zh", "note": "操作系统"}
+{"input": "编程语", "expected": ["言"], "category": "zh", "note": "编程语言"}
+{"input": "软件工", "expected": ["程"], "category": "zh", "note": "软件工程"}
+{"input": "服务", "expected": ["器", "员"], "category": "zh", "note": "服务器"}
+{"input": "客户", "expected": ["端", "户"], "category": "zh", "note": "客户端"}
+{"input": "网", "expected": ["络", "站", "页"], "category": "zh", "note": "网络"}
+{"input": "数", "expected": ["据", "字", "学"], "category": "zh", "note": "数据"}
+{"input": "", "expected": [""], "category": "empty", "note": "empty input"}
+{"input": "ls", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "docker", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "ssh", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "grep", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "kubectl", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "npm", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "cat", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "python3", "expected": [""], "category": "empty", "note": "bare command"}
+{"input": "git", "expected": [""], "category": "empty", "note": "bare command"}

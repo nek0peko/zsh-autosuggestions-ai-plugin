@@ -25,18 +25,15 @@
 # Implementation is intentionally dependency-light: only `curl` is used
 # to talk to Ollama (no python/jq), and JSON is built/parsed with pure
 # zsh parameter expansion.
-#
-# Model is hardwired to qwen3.5:4b for now; the variables below are
-# exposed with defaults so making it configurable later is trivial.
 
 # Model pinned for now; override only if you know what you're doing.
 : ${ZSH_AUTOSUGGEST_AI_MODEL:=qwen3.5:4b}
 # Debounce window (seconds). Paid only when the AI fallback actually runs.
 : ${ZSH_AUTOSUGGEST_AI_DEBOUNCE:=0.2}
-# How many recent commands to feed the model as context.
-: ${ZSH_AUTOSUGGEST_AI_HISTORY_SIZE:=20}
 # Ollama HTTP endpoint.
 : ${ZSH_AUTOSUGGEST_AI_ENDPOINT:=http://localhost:11434/api/generate}
+# Path to the prompt template; `{INPUT}` is replaced with the user's buffer.
+: ${ZSH_AUTOSUGGEST_AI_PROMPT_FILE:=${0:A:h}/prompt.txt}
 
 # Escape a string for embedding inside a JSON string literal.
 _zsh_autosuggest_ai_json_escape() {
@@ -63,27 +60,18 @@ _zsh_autosuggest_strategy_ai() {
 	# suggestions degrade gracefully to history-only.
 	(( $+commands[curl] )) || return
 
+	# Prompt template must exist on disk.
+	[[ -r "$ZSH_AUTOSUGGEST_AI_PROMPT_FILE" ]] || return
+
 	# Debounce: if another key arrives within this window, the async
 	# machinery kills this whole fork (including the sleep and the model
 	# request) before we hit the model.
 	command sleep "$ZSH_AUTOSUGGEST_AI_DEBOUNCE"
 
-	# Recent commands as context (most recent last).
-	local history_ctx
-	history_ctx="$(fc -ln -$ZSH_AUTOSUGGEST_AI_HISTORY_SIZE -1 2>/dev/null)"
-
-	# Build the prompt (plain text), then JSON-escape the whole thing.
-	local prompt
-	prompt="You are a shell command completion engine. Given a partial command, output ONLY the characters needed to complete the current (final) word. Never repeat the input. Output at most one word or flag, no spaces, no explanation, no quotes, no punctuation, no newlines. If nothing fits, output nothing."$'\n\n'
-	if [[ -n "${history_ctx//[[:space:]]/}" ]]; then
-		prompt+="Recent commands the user ran, newest last (context only):"$'\n'"$history_ctx"$'\n\n'
-	fi
-	prompt+="Partial: git pus"$'\n'"Missing suffix: h"$'\n'
-	prompt+="Partial: git pu"$'\n'"Missing suffix: ll"$'\n'
-	prompt+="Partial: ca"$'\n'"Missing suffix: t"$'\n'
-	prompt+="Partial: docke"$'\n'"Missing suffix: r"$'\n'
-	prompt+="Partial: git che"$'\n'"Missing suffix: ckout"$'\n'
-	prompt+="Partial: $buffer"$'\n'"Missing suffix:"
+	# Load the prompt template and substitute the user's buffer.
+	local template prompt
+	template="$(<"$ZSH_AUTOSUGGEST_AI_PROMPT_FILE")"
+	prompt="${template//\{INPUT\}/$buffer}"
 
 	local prompt_json model_json
 	prompt_json="$(_zsh_autosuggest_ai_json_escape "$prompt")"
@@ -94,23 +82,29 @@ _zsh_autosuggest_strategy_ai() {
 	local resp
 	resp="$(curl -s --max-time 10 "$ZSH_AUTOSUGGEST_AI_ENDPOINT" \
 		-H 'Content-Type: application/json' \
-		-d "{\"model\":\"$model_json\",\"prompt\":\"$prompt_json\",\"think\":false,\"stream\":false,\"options\":{\"temperature\":0,\"num_predict\":20}}" \
+		-d "{\"model\":\"$model_json\",\"prompt\":\"$prompt_json\",\"think\":false,\"stream\":false,\"options\":{\"temperature\":0,\"num_predict\":24,\"stop\":[\"\\n\",\"Input:\",\"input:\",\"->\"]}}" \
 		2>/dev/null)" || return
 
-	# Extract the "response" field value from the JSON (it is the last
-	# such key; the model output never contains an unescaped quote for our
-	# single-token prompt, so a simple slice is safe).
+	# Extract the "response" field value from the JSON.
 	[[ "$resp" == *'"response":"'* ]] || return
 	local suffix="${resp#*\"response\":\"}"
 	suffix="${suffix%%\"*}"
 
 	# Unescape the few sequences our escape step could have produced, then
-	# keep only the first line and first whitespace-delimited token.
+	# keep only the first line and strip leading/trailing whitespace.
 	suffix="${suffix//\\n/ }"
 	suffix="${suffix//\\t/ }"
 	suffix="${suffix//\\\"/\"}"
 	suffix="${suffix//\\\\/\\}"
-	suffix="${suffix%%[[:space:]]*}"
+	suffix="${suffix%% *}"
+	suffix="${suffix##[[:space:]]##}"
+	suffix="${suffix%%[[:space:]]##}"
+
+	# The prompt uses `<EMPTY>` as the "no suggestion" sentinel.
+	[[ "$suffix" == "<EMPTY>" ]] && return
+
+	# The model occasionally re-emits the user's input prefix; strip it.
+	[[ -n "$suffix" && "$suffix" == "$buffer"* ]] && suffix="${suffix#$buffer}"
 
 	# zsh-autosuggestions expects the full command line (prefix + suffix),
 	# and only keeps it if it starts with buffer.
